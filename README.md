@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aurora Cinemas
 
-## Getting Started
+A multi-location movie theater demo built with Next.js, Flowbite React, Tailwind CSS, and SQLite.
 
-First, run the development server:
+## Features
+
+- Public location selector with theater information, amenities, movies, and showtimes
+- Four seeded locations, twelve nostalgic films from 1990–2001, authentic poster artwork, and four days of mock schedules
+- Admin dashboard for location details, movies, and screening schedules
+- Persistent SQLite storage with automatic first-run schema creation and seeding
+- Standalone Docker image and a single-replica Kubernetes deployment with a persistent volume
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). The SQLite database is created at `data/cinema.db` on first run.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The admin area is at [http://localhost:3000/admin](http://localhost:3000/admin):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Username: `admin`
+- Password: `admin`
 
-## Learn More
+These credentials are intentionally fixed for this demo and must not be used as a production authentication design.
 
-To learn more about Next.js, take a look at the following resources:
+## Configuration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Variable        | Default            | Purpose                           |
+| --------------- | ------------------ | --------------------------------- |
+| `DATABASE_PATH` | `./data/cinema.db` | SQLite database file              |
+| `AUTH_SECRET`   | demo fallback      | Salt for the admin session cookie |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Docker
 
-## Deploy on Vercel
+```bash
+docker build -t aurora-cinema:latest .
+docker run --rm -p 3000:3000 -v aurora-data:/app/data aurora-cinema:latest
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deployments follow the same Orbitali Kubernetes pattern as the sibling Restaurant app. A push to `main` builds a commit-tagged image, publishes it to GHCR, and asks the deployment API to roll it out. The production host defaults to:
+
+```text
+movies.orbitali.ai
+```
+
+Configure these GitHub settings before the first deployment:
+
+| Type     | Name                         | Purpose                                                  |
+| -------- | ---------------------------- | -------------------------------------------------------- |
+| Secret   | `DEPLOY_API_URL`             | Orbitali deployment API base URL                         |
+| Secret   | `DEPLOY_API_KEY`             | Deployment API authentication                            |
+| Variable | `PRODUCTION_NAMESPACE`       | Kubernetes namespace                                     |
+| Variable | `PRODUCTION_HOSTS`           | Optional host override; defaults to `movies.orbitali.ai` |
+| Variable | `PRODUCTION_ENV_SECRET_NAME` | Optional Kubernetes environment secret name              |
+| Variable | `APP_PORT`                   | Optional application port; defaults to `3000`            |
+
+The referenced environment secret should set a non-default `AUTH_SECRET`. SQLite is stored at `/app/data/cinema.db`; the deployment must keep `/app/data` on persistent single-writer storage and run one application replica.
+
+## Demo artwork
+
+The theatrical poster images are loaded at runtime from TMDB and are not redistributed in this repository or container image. Movie titles and artwork remain the property of their respective owners; this project is not endorsed by TMDB or the film studios.

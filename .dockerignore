@@ -1,0 +1,13 @@
+.git
+.github
+.next
+node_modules
+data
+public/posters
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env*
+README.md
+tsconfig.tsbuildinfo

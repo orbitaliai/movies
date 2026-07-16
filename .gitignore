@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local SQLite data
+/data/
+
+# third-party movie artwork is loaded from its source, not redistributed
+/public/posters/

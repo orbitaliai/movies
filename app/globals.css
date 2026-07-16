@@ -1,5 +1,25 @@
 @import "tailwindcss";
-@plugin "flowbite-react/plugin/tailwindcss";
+@import "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #f8fafc;
+}
+
+.aurora-glow {
+  background:
+    radial-gradient(circle at 78% 30%, rgb(167 139 250 / 42%), transparent 31%),
+    radial-gradient(circle at 15% 80%, rgb(244 114 182 / 20%), transparent 37%),
+    linear-gradient(135deg, #ffffff 15%, #f5f3ff 55%, #fdf2f8 100%);
+}
